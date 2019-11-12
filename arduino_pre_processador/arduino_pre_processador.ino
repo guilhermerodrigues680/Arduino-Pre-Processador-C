@@ -7,6 +7,7 @@
  * https://forum.arduino.cc/index.php?topic=46900.0
  * https://www.embarcados.com.br/pre-processador-c-parte-1/
  * https://www.embarcados.com.br/pre-processador-c-compilacao-condicional-parte-2/
+ * https://www.embarcados.com.br/pre-processador-c-diagnostico-parte-3/
  */
 
 //// SELECAO DE DISPOSTIVO ////
@@ -63,7 +64,18 @@
 
 // Delay quando o debug esta ativado
 #define DEBUG_DELAY()\
-          delay(2000); //Delay 2 seg
+          delay(2000);
+
+// Diretivas auxiliares de DEBUG
+#define DEBUG_AUX()\
+          Serial.print("DEBUG AUX: ");\
+          Serial.print(__LINE__);\
+          Serial.print(" | ");\
+          Serial.print(__FILE__);\
+          Serial.print(" | ");\
+          Serial.print(__DATE__);\
+          Serial.print(" | ");\
+          Serial.println(__TIME__);
 
 #else
 // Quando o DEBUG esta desativado, as funcoes não existem (codigo em branco).
@@ -71,6 +83,7 @@
 #define DEBUG_PRINT_DISPOSITIVO()
 #define DEBUG_PRINT(msg)
 #define DEBUG_DELAY()
+#define DEBUG_AUX()
 #endif
 
 /*
@@ -79,7 +92,17 @@
 void setup() {
   DEBUG_BEGIN();
   DEBUG_PRINT_DISPOSITIVO();
-
+  
+  // Escreve no momento da copilacao (__LINE__ aparentemente nao funciona com pragma)
+  #pragma message "Um texto qualquer"
+  #pragma message "Linha do programa atual: " __LINE__
+  #pragma message "Caminho do arquivo: " __FILE__
+  #pragma message "Data: " __DATE__
+  #pragma message "Horario: " __TIME__
+  
+  // Escreve no Serial apos a copilacao
+  DEBUG_AUX();
+  
   pinMode(PINO_LED, OUTPUT);
 
 }
